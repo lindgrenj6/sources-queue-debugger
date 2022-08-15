@@ -12,9 +12,6 @@ objects:
     deployments:
     - name: event-stream-listener
       minReplicas: ${{MIN_REPLICAS}}
-      webServices:
-        public:
-          enabled: true # port 8000 is default in ClowdEnvironment
       podSpec:
         image: ${IMAGE}:${IMAGE_TAG}
         env:
@@ -32,7 +29,7 @@ objects:
     - topicName: platform.sources.status
       partitions: 3
       replicas: 3
-    inMemoryDb: false
+    inMemoryDb: true
 
 parameters:
 - description: Image

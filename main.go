@@ -12,14 +12,15 @@ import (
 var (
 	cfg         = clowder.LoadedConfig
 	eventStream = topic("platform.sources.event-stream")
-	status      = topic("platform.sources.status")
 )
 
 func main() {
 	go listen(eventStream)
 
-	http.Handle("/post-status", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("OK"))
+	http.Handle("/info", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		out := getAll(eventStream)
+		bytes := must(json.MarshalIndent(out, "", "  "))
+		w.Write(bytes)
 	}))
 
 	http.ListenAndServe(":8000", nil)

@@ -4,11 +4,14 @@ go 1.18
 
 require (
 	github.com/RedHatInsights/sources-api-go v0.0.0-20220810122356-c8e6d72249a4
+	github.com/go-redis/redis/v8 v8.11.5
 	github.com/redhatinsights/app-common-go v1.6.3
 )
 
 require (
 	github.com/aws/aws-sdk-go v1.42.22 // indirect
+	github.com/cespare/xxhash/v2 v2.1.2 // indirect
+	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect

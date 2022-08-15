@@ -19,6 +19,10 @@ func toMessage(topic string, m *kafka.Message) *KafkaMessage {
 
 	headers := make([]Header, len(m.Headers))
 	for i := range m.Headers {
+		if m.Headers[i].Key == "event_type" {
+			incrementCount(topic, string(m.Headers[i].Value))
+		}
+
 		headers[i] = Header{
 			Key:   m.Headers[i].Key,
 			Value: string(m.Headers[i].Value),
