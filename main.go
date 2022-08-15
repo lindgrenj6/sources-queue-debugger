@@ -22,6 +22,10 @@ func main() {
 		bytes := must(json.MarshalIndent(out, "", "  "))
 		w.Write(bytes)
 	}))
+	http.Handle("/clear", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		clearAll(eventStream)
+		w.Write([]byte("OK"))
+	}))
 
 	http.ListenAndServe(":8000", nil)
 }
