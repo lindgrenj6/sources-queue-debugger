@@ -10,23 +10,56 @@ objects:
   spec:
     envName: ${ENV_NAME}
     deployments:
-    - name: event-stream-listener
-      minReplicas: ${{MIN_REPLICAS}}
+    - name: event-stream
+      minReplicas: 1
       podSpec:
         image: ${IMAGE}:${IMAGE_TAG}
         env:
-        resources:
-          limits:
-            cpu: ${CPU_LIMIT}
-            memory: ${MEMORY_LIMIT}
-          requests:
-            cpu: ${CPU_REQUEST}
-            memory: ${MEMORY_REQUEST}
+        - name: TOPIC
+          value: platform.sources.event-stream
+    - name: status
+      minReplicas: 1
+      podSpec:
+        image: ${IMAGE}:${IMAGE_TAG}
+        env:
+        - name: TOPIC
+          value: platform.sources.status
+    - name: satellite-operations
+      minReplicas: 1
+      podSpec:
+        image: ${IMAGE}:${IMAGE_TAG}
+        env:
+        - name: TOPIC
+          value: platform.topological-inventory.operations-satellite
+    - name: superkey-requests
+      minReplicas: 1
+      podSpec:
+        image: ${IMAGE}:${IMAGE_TAG}
+        env:
+        - name: TOPIC
+          value: platform.sources.superkey-requests
+    - name: notifications
+      minReplicas: 1
+      podSpec:
+        image: ${IMAGE}:${IMAGE_TAG}
+        env:
+        - name: TOPIC
+          value: platform.notifications.ingress
+
     kafkaTopics:
     - topicName: platform.sources.event-stream
       partitions: 3
       replicas: 3
     - topicName: platform.sources.status
+      partitions: 3
+      replicas: 3
+    - topicName: platform.topological-inventory.operations-satellite
+      partitions: 3
+      replicas: 3
+    - topicName: platform.sources.superkey-requests
+      partitions: 3
+      replicas: 3
+    - topicName: platform.notifications.ingress
       partitions: 3
       replicas: 3
     inMemoryDb: false
@@ -39,17 +72,6 @@ parameters:
   name: IMAGE_TAG
   required: true
   value: latest
-- name: CPU_LIMIT
-  value: 200m
-- name: CPU_REQUEST
-  value: 50m
-- name: MEMORY_LIMIT
-  value: 200Mi
-- name: MEMORY_REQUEST
-  value: 50Mi
-- description: The number of replicas to use for the prometheus deploy
-  name: MIN_REPLICAS
-  value: '1'
 - description: Clowder ENV
   name: ENV_NAME
   required: true

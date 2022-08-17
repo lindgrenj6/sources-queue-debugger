@@ -3,27 +3,35 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
+	"os"
 
 	"github.com/RedHatInsights/sources-api-go/kafka"
 	clowder "github.com/redhatinsights/app-common-go/pkg/api/v1"
 )
 
 var (
-	cfg         = clowder.LoadedConfig
-	eventStream = topic("platform.sources.event-stream")
+	cfg            = clowder.LoadedConfig
+	requestedTopic = topic(os.Getenv("TOPIC"))
 )
 
 func main() {
-	go listen(eventStream)
+	if requestedTopic == "" {
+		log.Fatalf("topic %v not found, be sure to set TOPIC in ENV", requestedTopic)
+	}
+
+	fmt.Printf("{\"queue_name\": \"%v\"}\n", requestedTopic)
+
+	go listen(requestedTopic)
 
 	http.Handle("/info", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		out := getAll(eventStream)
+		out := getAll(requestedTopic)
 		bytes := must(json.MarshalIndent(out, "", "  "))
 		w.Write(bytes)
 	}))
 	http.Handle("/clear", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		clearAll(eventStream)
+		clearAll(requestedTopic)
 		w.Write([]byte("OK"))
 	}))
 
