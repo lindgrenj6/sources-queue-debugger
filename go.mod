@@ -3,7 +3,7 @@ module github.com/lindgrenj6/sources-queue-debugger
 go 1.18
 
 require (
-	github.com/RedHatInsights/sources-api-go v0.0.0-20220810122356-c8e6d72249a4
+	github.com/RedHatInsights/sources-api-go v0.0.0-20220819062223-e31490801218
 	github.com/redhatinsights/app-common-go v1.6.3
 )
 

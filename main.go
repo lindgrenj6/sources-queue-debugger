@@ -12,11 +12,16 @@ import (
 )
 
 var (
-	cfg            = clowder.LoadedConfig
-	requestedTopic = topic(os.Getenv("TOPIC"))
+	cfg     = clowder.LoadedConfig
+	groupID = "debugger"
 )
 
 func main() {
+	if !clowder.IsClowderEnabled() {
+		log.Fatal("clowder is not enabled - exiting.")
+	}
+
+	requestedTopic := topic(os.Getenv("TOPIC"))
 	if requestedTopic == "" {
 		log.Fatalf("topic %v not found, be sure to set TOPIC in ENV", requestedTopic)
 	}
@@ -39,7 +44,12 @@ func main() {
 }
 
 func listen(topic string) {
-	reader := must(kafka.GetReader(&cfg.Kafka.Brokers[0], "debugger", topic))
+	reader := must(kafka.GetReader(&kafka.Options{
+		BrokerConfig: &cfg.Kafka.Brokers[0],
+		Topic:        topic,
+		GroupID:      &groupID,
+		Logger:       &Logger{},
+	}))
 
 	kafka.Consume(reader, func(m kafka.Message) {
 		msg := toMessage(topic, &m)
